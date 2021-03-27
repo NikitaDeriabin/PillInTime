@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1021044309135",
+    "project_id": "pillintime",
+    "storage_bucket": "pillintime.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021044309135:android:97b02b6c4575abe01584fa",
+        "android_client_info": {
+          "package_name": "com.example.pillintime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1021044309135-p2gan4stqijti21grlov2ur3g09m9ul8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pillintime",
+            "certificate_hash": "a61c843199e8cc4e40a4817b64d3b7d2c646750e"
+          }
+        },
+        {
+          "client_id": "1021044309135-i2r8lmfrjn79476k4v9sl23ogdvesrh9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAje0oQITxHrSBisM1aaShr5N8Gwon5Es"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1021044309135-i2r8lmfrjn79476k4v9sl23ogdvesrh9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
