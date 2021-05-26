@@ -6,12 +6,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Layout;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +34,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Calendar;
+
 public class  WorkSpaceActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -39,10 +46,23 @@ public class  WorkSpaceActivity extends AppCompatActivity
     private DatabaseReference reference;
     private String userID;
 
+    ReminderDate setCalendarDate = new ReminderDate();
+    HomeFragment homeFragment = new HomeFragment();
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_work_space);
+
+        //set calendar 
+        Calendar calendar = Calendar.getInstance();
+        setCalendarDate.setYear(calendar.get(Calendar.YEAR));
+        setCalendarDate.setMonth(calendar.get(Calendar.MONTH) + 1);
+        setCalendarDate.setDay(calendar.get(Calendar.DAY_OF_MONTH));
+
+
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -58,8 +78,10 @@ public class  WorkSpaceActivity extends AppCompatActivity
 
         // saving data when rotate phone
         if(savedInstanceState == null) {
+            transferData(setCalendarDate, homeFragment);
+
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new HomeFragment()).commit();
+                   homeFragment).commit();
             navigationView.setCheckedItem(R.id.nav_home);
         }
 
@@ -97,8 +119,9 @@ public class  WorkSpaceActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
             case R.id.nav_home:
+                transferData(setCalendarDate, homeFragment);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new HomeFragment()).commit();
+                        homeFragment).commit();
                 break;
             case R.id.nav_medication:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
@@ -154,5 +177,57 @@ public class  WorkSpaceActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.choose_day_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.calendar){
+            selectDate();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void selectDate(){
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+               // set_date.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+
+                setCalendarDate.setYear(year);
+                setCalendarDate.setMonth(month + 1);
+                setCalendarDate.setDay(dayOfMonth);
+
+                if(homeFragment != null){
+                    try{
+                    homeFragment.updateCalendarDate(setCalendarDate.getDay(), setCalendarDate.getMonth(),
+                            setCalendarDate.getYear());}
+                    catch (Exception ex){
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            }
+        }, setCalendarDate.getYear(), setCalendarDate.getMonth() - 1, setCalendarDate.getDay());
+        datePickerDialog.show();
+    }
+
+    private void transferData(ReminderDate date, Fragment fragment){
+        Bundle bundle = new Bundle();
+        int day = date.getDay();
+        int month = date.getMonth();
+        int year = date.getYear();
+
+        bundle.putInt("day", day);
+        bundle.putInt("month", month);
+        bundle.putInt("year", year);
+
+        fragment.setArguments(bundle);
     }
 }

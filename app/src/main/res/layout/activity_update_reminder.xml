@@ -8,27 +8,23 @@
     android:theme="@style/Theme.AppCompat.Light.NoActionBar"
     >
 
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/reminder_image"
-        android:layout_width="280dp"
-        android:layout_height="280dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="42dp"
-        android:src="@drawable/pill"
-        app:civ_border_color="@color/white"
-        app:civ_border_width="2dp" />
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/update_reminder_toolbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="16dp"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="@color/teal_200" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_below="@+id/reminder_image"
+        android:layout_below="@+id/update_reminder_toolbar"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:id="@+id/add_reminder_layout_top"
+        android:id="@+id/update_reminder_layout_top"
         android:orientation="vertical"
-        android:layout_marginTop="40dp"
         android:background="@color/teal_200"
         android:layout_height="80dp">
 
@@ -53,7 +49,7 @@
     <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
-        android:layout_below="@id/add_reminder_layout_top"
+        android:layout_below="@id/update_reminder_layout_top"
         android:layout_height="fill_parent">
 
         <LinearLayout
@@ -154,7 +150,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:clickable="true"
-                android:id="@+id/add_reminder_number_picker"
+                android:id="@+id/update_reminder_number_picker"
                 android:background="?android:attr/selectableItemBackground"
                 android:layout_height="72dp">
 
@@ -198,45 +194,45 @@
 
 
             <LinearLayout
-            android:layout_width="match_parent"
-            android:weightSum="2"
-            android:layout_margin="25dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="horizontal">
+                android:layout_width="match_parent"
+                android:weightSum="2"
+                android:layout_margin="25dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/add_reminder_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                app:srcCompat="@drawable/ic_close"
-                app:fabSize="normal"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center"
-                android:backgroundTint="@color/cancel"
-                android:layout_marginHorizontal="25dp"
-                />
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/update_reminder_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    app:srcCompat="@drawable/ic_close"
+                    app:fabSize="normal"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:backgroundTint="@color/cancel"
+                    android:layout_marginHorizontal="25dp"
+                    />
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/add_reminder_submit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                app:srcCompat="@drawable/ic_check"
-                app:fabSize="normal"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center"
-                android:backgroundTint="@color/teal_200"
-                android:layout_marginHorizontal="25dp"
-                />
-        </LinearLayout>
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/update_reminder_submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    app:srcCompat="@drawable/ic_check"
+                    app:fabSize="normal"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:backgroundTint="@color/teal_200"
+                    android:layout_marginHorizontal="25dp"
+                    />
+            </LinearLayout>
 
         </LinearLayout>
 

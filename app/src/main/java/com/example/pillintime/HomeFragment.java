@@ -7,6 +7,8 @@ import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -33,7 +35,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static android.content.ContentValues.TAG;
 
@@ -43,11 +48,20 @@ public class HomeFragment extends Fragment {
     ReminderAdapter reminderAdapter;
     RecyclerView recyclerView;
     UserManager userManager;
+    ReminderDate chosenDate = new ReminderDate();
     List<Reminder> reminderList = new ArrayList<Reminder>();
+    List<Reminder> reminderListInBound  = new ArrayList<Reminder>();
 
     private FirebaseUser currUser;
     private DatabaseReference reference;
     private String userID;
+
+    int calendar_day;
+    int calendar_month;
+    int calendar_year;
+    boolean refreshFlag = false;
+
+    private ReminderAdapter.RecyclerViewClickListener listener;
 
     @Nullable
     @Override
@@ -55,6 +69,9 @@ public class HomeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mAddReminderBtn = (FloatingActionButton) view.findViewById(R.id.add_reminder_btn);
+
+        //getting calendar date from WorkSpaceActivity
+        getCalendarDate();
 
         recyclerView = view.findViewById(R.id.home_recycler_view);
 
@@ -67,6 +84,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), AddReminderActivity.class);
                 startActivity(intent);
+                refreshFlag = true;
             }
         });
 
@@ -84,9 +102,11 @@ public class HomeFragment extends Fragment {
 
                     reminderList.clear();
                     reminderList.addAll(user.reminderList);
-                    System.out.println(reminderList.size());
+                    getBoundReminders(reminderList);
+                    //System.out.println(reminderList.size());
 
-                    setAdapter(reminderList);
+                    //setAdapter(reminderList);
+                    setAdapter(reminderListInBound);
                 }
             }
 
@@ -100,17 +120,90 @@ public class HomeFragment extends Fragment {
     }
 
     private void setAdapter(List<Reminder> reminderList){
-       reminderAdapter = new ReminderAdapter(getActivity().getApplicationContext(), reminderList);
+       setOnClickRecyclerItemListener();
+       reminderAdapter = new ReminderAdapter(getActivity().getApplicationContext(), reminderList, listener);
        recyclerView.setAdapter(reminderAdapter);
+    }
+
+    private void setOnClickRecyclerItemListener(){
+        listener = new ReminderAdapter.RecyclerViewClickListener(){
+            @Override
+            public void onClick(View v, int position) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), UpdateReminderActivity.class);
+
+                intent.putExtra("id", String.valueOf(reminderListInBound.get(position).getId()));
+                intent.putExtra("medicineTitle", String.valueOf(reminderListInBound.get(position).getName()));
+                intent.putExtra("amount", String.valueOf(reminderListInBound.get(position).getAmountDay()));
+                intent.putExtra("startDate_day", String.valueOf(reminderListInBound.get(position).getStartReminderDay().getDay()));
+                intent.putExtra("startDate_month", String.valueOf(reminderListInBound.get(position).getStartReminderDay().getMonth()));
+                intent.putExtra("startDate_year", String.valueOf(reminderListInBound.get(position).getStartReminderDay().getYear()));
+                intent.putExtra("time_hours", String.valueOf(reminderListInBound.get(position).getAlarmTimeList().get(0).getHours()));
+                intent.putExtra("time_minutes", String.valueOf(reminderListInBound.get(position).getAlarmTimeList().get(0).getMinutes()));
+
+                startActivity(intent);
+                refreshFlag = true;
+            }
+        };
     }
 
     //вызывается когда фрагмент становится виден пользователю
     @Override
     public void onResume() {
         super.onResume();
-        // добавить userManager.read() и потом setAdapter потестить как будет работать
+        if(refreshFlag) {
+            getFragmentManager().beginTransaction().detach(HomeFragment.this).attach(HomeFragment.this).commit();
+            refreshFlag = false;
+        }
+    }
+    public void updateCalendarDate(int day, int month, int year){
+        chosenDate.setDay(day);
+        chosenDate.setMonth(month);
+        chosenDate.setYear(year);
+        //System.out.println(calendar_day + " " + calendar_month + " " + calendar_month + "\n\n\n");
+
+        getBoundReminders(reminderList);
+        setAdapter(reminderListInBound);
     }
 
 
+    private void getCalendarDate(){
+        try {
+            if(chosenDate.getDay() == 0){
+                Bundle bundle = this.getArguments();
+                chosenDate.setDay(bundle.getInt("day"));
+                chosenDate.setMonth(bundle.getInt("month"));
+                chosenDate.setYear(bundle.getInt("year"));
+            }
+        }
+        catch (Exception ex){
+            System.out.println("ERROR");
+        }
+    }
 
+    private void getBoundReminders(List<Reminder> reminderList){
+        reminderListInBound.clear();
+        for (Reminder reminder :reminderList) {
+            try {
+                ReminderDate startDate = reminder.getStartReminderDay();
+                int amountDay = reminder.getAmountDay();
+
+                Calendar start = Calendar.getInstance();
+                start.clear();
+                start.set(startDate.getYear(), startDate.getMonth() - 1, startDate.getDay());
+                Calendar finish = (Calendar) start.clone();
+                finish.add(Calendar.DATE, amountDay);
+
+                Calendar chosen = Calendar.getInstance();
+                chosen.clear();
+                chosen.set(chosenDate.getYear(), chosenDate.getMonth() - 1, chosenDate.getDay());
+
+                if ((chosen.after(start) && chosen.before(finish)) ||
+                        (chosen.equals(start) || chosen.equals(finish))) {
+                    reminderListInBound.add(reminder);
+                }
+            } catch (Exception ex){
+                System.out.println(ex.getMessage());
+            }
+        }
+    }
 }

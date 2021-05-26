@@ -1,14 +1,8 @@
 package com.example.pillintime;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
@@ -17,7 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -26,7 +19,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.pillintime.Adapter.ReminderAdapter;
 import com.example.pillintime.Managers.UserManager;
 import com.example.pillintime.Models.Reminder;
 import com.example.pillintime.Notification.AlarmBroadcast;
@@ -39,9 +31,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
-public class AddReminderActivity extends AppCompatActivity implements View.OnClickListener{
+public class UpdateReminderActivity extends AppCompatActivity implements View.OnClickListener {
 
     TextView btn_date, btn_time, btn_numPicker;
     TextView set_time, set_date;
@@ -56,23 +47,19 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
     Reminder reminder = new Reminder();
     NumberPicker numberPicker;
 
-    ReminderAdapter reminderAdapter;
-    RecyclerView recyclerView;
-
-
-
+    int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_reminder);
+        setContentView(R.layout.activity_update_reminder);
 
         btn_date = findViewById(R.id.date_text);
         btn_time = findViewById(R.id.time_text);
         btn_numPicker = findViewById(R.id.period_days_text);
         medicineTitle = findViewById(R.id.reminder_title);
-        btn_sbmt = findViewById(R.id.add_reminder_submit);
-        btn_cancel = findViewById(R.id.add_reminder_cancel);
+        btn_sbmt = findViewById(R.id.update_reminder_submit);
+        btn_cancel = findViewById(R.id.update_reminder_cancel);
         set_date = findViewById(R.id.set_date);
         set_time = findViewById(R.id.set_time);
         numberPicker = findViewById(R.id.set_period_days);
@@ -83,12 +70,50 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
         btn_numPicker.setOnClickListener(this);
         numberPicker.setOnClickListener(this);
 
+        getAndSetIntentData();
 
-        recyclerView =  findViewById(R.id.home_recycler_view);
-
-
+        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                reminder.setAmountDay(newVal);
+                System.out.println(reminder.getAmountDay());
+            }
+        });
     }
 
+    private void getAndSetIntentData() {
+        String day, month, year;
+        String hours, minutes;
+        int numberPickerVal;
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            id = Integer.parseInt(extras.getString("id").trim());
+            medicineTitle.setText(extras.getString("medicineTitle"));
+            day = extras.getString("startDate_day");
+            month = extras.getString("startDate_month");
+            year = extras.getString("startDate_year");
+            hours = extras.getString("time_hours");
+            minutes = extras.getString("time_minutes");
+            numberPickerVal = Integer.parseInt(extras.getString("amount").trim());
+
+            set_date.setText(day+"/"+month+"/"+year);
+            set_time.setText(FormatTime(Integer.parseInt(hours), Integer.parseInt(minutes)));
+
+            startReminderDate.setDay(Integer.parseInt(day));
+            startReminderDate.setMonth(Integer.parseInt(month));
+            startReminderDate.setYear(Integer.parseInt(year));
+
+            alarmTime.setHours(Integer.parseInt(hours));
+            alarmTime.setMinutes(Integer.parseInt(minutes));
+
+            numberPicker.setMinValue(1);
+            numberPicker.setMaxValue(365);
+            numberPicker.setValue(numberPickerVal);
+
+            reminder.setId(id);
+            reminder.setAmountDay(numberPickerVal);
+        }
+    }
 
     @Override
     public void onClick(View view) {
@@ -100,7 +125,7 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
 
         }
         else if(view == numberPicker){
-            selectPeriodOfDays();
+            //selectPeriodOfDays();
         }
         else if(view == btn_sbmt){
             submit();
@@ -109,19 +134,6 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
             cancel();
         }
 
-    }
-
-    private void selectPeriodOfDays(){
-        numberPicker.setMinValue(1);
-        numberPicker.setMaxValue(365);
-
-
-        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                reminder.setAmountDay(newVal);
-            }
-        });
     }
 
     private void cancel(){
@@ -168,16 +180,23 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
                 //возможно недобавится нужно проверить
                 reminder.getAlarmTimeList().add(alarmTime);
 
+                System.out.println("#############################################################");
+                System.out.println(reminder.getAmountDay());
+
                 //updating data for user
                 userManager = new UserManager();
-                userManager.update(reminder);
+                userManager.updateReminder(reminder);
+                //userManager.update(reminder);
 
+
+                //setAdapter(userManager.getUser().reminderList);
 
                 try {
                     Thread.sleep(300);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
                 setAlarm(reminderTitle, date, time);
                 finish();
 
@@ -221,8 +240,6 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
         }, hour, minute, false);
         timePickerDialog.show();
     }
-
-
 
     public String FormatTime(int hour, int minute){
         String time;
@@ -274,4 +291,5 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
         }
 
     }
+
 }

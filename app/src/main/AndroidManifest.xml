@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PillinTime">
-        <activity android:name=".Notification.NotificationMessageActivity"></activity>
+        <activity android:name=".UpdateReminderActivity"></activity>
+        <activity android:name=".Notification.NotificationMessageActivity" />
         <activity
             android:name=".AddReminderActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />

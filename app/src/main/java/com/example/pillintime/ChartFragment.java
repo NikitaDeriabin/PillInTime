@@ -36,17 +36,25 @@ public class ChartFragment extends Fragment {
     private FirebaseUser currUser;
     private DatabaseReference reference;
     private String userID;
+    PieChart pieChart;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chart, container, false);
-        PieChart pieChart = view.findViewById(R.id.pieChart);
+        pieChart = view.findViewById(R.id.pieChart);
 
         currUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users");
         userID = currUser.getUid();
 
+        displayChart();
+
+        return view;
+
+    }
+
+    public void displayChart(){
         reference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -79,8 +87,5 @@ public class ChartFragment extends Fragment {
                 Log.w(TAG, "called onCancelled in READING data", error.toException());
             }
         });
-
-        return view;
-
     }
 }

@@ -24,14 +24,14 @@ import org.w3c.dom.Text;
 
 import java.util.List;
 
-public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHolder> {
+public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.ViewHolder> {
 
     Context context;
     List<Reminder> reminderList;
     private RecyclerViewClickListener listener;
 
 
-    public ReminderAdapter(Context context, List<Reminder> reminderList, RecyclerViewClickListener listener) {
+    public MedicationAdapter(Context context, List<Reminder> reminderList, RecyclerViewClickListener listener) {
         this.context = context;
         this.reminderList = reminderList;
         this.listener = listener;
@@ -41,19 +41,13 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        return new ViewHolder(LayoutInflater.from(parent.getContext()).
-//                inflate(R.layout.listing_row, parent, false));
-
         return new ViewHolder(LayoutInflater.from(parent.getContext()).
-                inflate(R.layout.listing_row2, parent, false));
+                inflate(R.layout.list_row_medication, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.reminderText.setText(reminderList.get(position).getName());
-        holder.timeAndDateReminderText.setText(reminderList.get(position).
-                getStartReminderDay().getDateStr() + " " +
-                reminderList.get(position).getAlarmTimeList().get(0).getAlarmTimeStr());
 
         TextDrawable drawable;
         drawable = holder.getDrawable();
@@ -73,13 +67,14 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
         private RelativeLayout listingRowLayout;
 
         private ImageView thumbnailImage;
+        private ImageView deleteIcon;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             reminderText = (TextView) itemView.findViewById(R.id.recycle_title);
-            timeAndDateReminderText = (TextView) itemView.findViewById(R.id.recycle_date_time);
             listingRowLayout = (RelativeLayout) itemView.findViewById(R.id.listing_row_layout2);
             thumbnailImage = (ImageView) itemView.findViewById(R.id.thumbnail_image);
+            deleteIcon = (ImageView) itemView.findViewById(R.id.delete_reminder_icon);
 
             String letter = "";
 
@@ -95,11 +90,16 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
             thumbnailImage.setImageDrawable(drawable);
 
             itemView.setOnClickListener(this);
+            deleteIcon.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            listener.onClick(v, getAdapterPosition());
+            if(v == itemView){
+                listener.onClickReminder(v, getAdapterPosition());
+            } else if(v == deleteIcon){
+                listener.onClickDeleteIcon(v, getAdapterPosition());
+            }
         }
 
         public TextDrawable getDrawable(){
@@ -120,7 +120,8 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
     }
 
     public interface RecyclerViewClickListener{
-        void onClick(View v, int position);
+        void onClickReminder(View v, int position);
+        void onClickDeleteIcon(View v, int position);
     }
 
 }

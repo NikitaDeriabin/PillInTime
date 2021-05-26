@@ -9,6 +9,7 @@ import java.util.List;
 
 public class Reminder {
 
+    private int id;
     private String name;
     private String img;
     private String note;
@@ -33,6 +34,7 @@ public class Reminder {
     }
 
     public void setAll(Reminder reminder){
+        this.id = reminder.getId();
         this.name = reminder.getName();
         this.img = reminder.getImg();
         this.note = reminder.getNote();
@@ -112,5 +114,13 @@ public class Reminder {
 
     public void addToAlarmTimeList(AlarmTime alarmTime){
         this.alarmTimeList.add(alarmTime);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
