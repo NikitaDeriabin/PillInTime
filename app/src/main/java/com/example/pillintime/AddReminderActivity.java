@@ -3,12 +3,8 @@ package com.example.pillintime;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
@@ -16,11 +12,12 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -30,18 +27,21 @@ import com.example.pillintime.Adapter.ReminderAdapter;
 import com.example.pillintime.Managers.UserManager;
 import com.example.pillintime.Models.Reminder;
 import com.example.pillintime.Notification.AlarmBroadcast;
+import com.example.pillintime.Notification.AlertReceiver;
 import com.example.pillintime.ReminderAttrs.AlarmTime;
 import com.example.pillintime.ReminderAttrs.ReminderDate;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class AddReminderActivity extends AppCompatActivity implements View.OnClickListener{
+
+    private static final int PICK_IMAGE_REQUEST = 1;
 
     TextView btn_date, btn_time, btn_numPicker;
     TextView set_time, set_date;
@@ -55,10 +55,12 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
     AlarmTime alarmTime = new AlarmTime();
     Reminder reminder = new Reminder();
     NumberPicker numberPicker;
+    ImageView reminderImageView;
+    Uri imageUri;
+
 
     ReminderAdapter reminderAdapter;
     RecyclerView recyclerView;
-
 
 
 
@@ -66,6 +68,7 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_reminder);
+
 
         btn_date = findViewById(R.id.date_text);
         btn_time = findViewById(R.id.time_text);
@@ -76,12 +79,17 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
         set_date = findViewById(R.id.set_date);
         set_time = findViewById(R.id.set_time);
         numberPicker = findViewById(R.id.set_period_days);
+        reminderImageView = findViewById(R.id.reminder_image);
+
+
+
         btn_date.setOnClickListener(this);
         btn_time.setOnClickListener(this);
         btn_sbmt.setOnClickListener(this);
         btn_cancel.setOnClickListener(this);
         btn_numPicker.setOnClickListener(this);
         numberPicker.setOnClickListener(this);
+        reminderImageView.setOnClickListener(this);
 
 
         recyclerView =  findViewById(R.id.home_recycler_view);
@@ -102,11 +110,37 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
         else if(view == numberPicker){
             selectPeriodOfDays();
         }
+        else if(view == reminderImageView){
+            openFileChooser();
+        }
         else if(view == btn_sbmt){
             submit();
         }
         else if(view == btn_cancel){
             cancel();
+        }
+
+    }
+
+    private void openFileChooser(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    //получить результат после выбора изображения в галерии
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+            && data != null && data.getData() != null){
+            imageUri = data.getData();
+            Picasso.get().load(imageUri).into(reminderImageView);
+
+            //задать изображение, реализация без Picasso
+            //reminderImageView.setImageURI(imageUri);
         }
 
     }
@@ -156,31 +190,30 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
             } else if(reminder.getAmountDay() <= 0){
                 Toast.makeText(this, "Please choose the period of days", Toast.LENGTH_LONG).show();
             } else {
+                userManager = new UserManager();
 
                 String reminderTitle = medicineTitle.getText().toString().trim();
                 String date = set_date.getText().toString().trim();
                 String time = set_time.getText().toString().trim();
 
-                //Creating new reminder
+
+                //set parameters
                 reminder.setName(reminderTitle);
                 reminder.setStartReminderDay(startReminderDate);
 
                 //возможно недобавится нужно проверить
                 reminder.getAlarmTimeList().add(alarmTime);
 
+                reminder.setReminderDateListByAmountOfDays(startReminderDate, reminder.getAmountDay());
+
                 //updating data for user
-                userManager = new UserManager();
-                userManager.update(reminder);
+                //upload image to firebase and set reminder.img
+                userManager.uploadFileAndUpdate(imageUri, reminder, getContentResolver());
 
+                //setAlarm(reminderTitle, date, time);
 
-                try {
-                    Thread.sleep(300);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                setAlarm(reminderTitle, date, time);
-                finish();
-
+                setDateAndTimeForNotification(reminder);
+                Toast.makeText(this, "The reminder was added!", Toast.LENGTH_LONG).show();
             }
 
         }
@@ -247,6 +280,32 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
         }
 
         return time;
+    }
+
+    public void setDateAndTimeForNotification(Reminder reminder){
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, reminder.getStartReminderDay().getYear());
+        c.set(Calendar.MONTH, reminder.getStartReminderDay().getMonth() - 1);
+        c.set(Calendar.DAY_OF_MONTH, reminder.getStartReminderDay().getDay());
+        c.set(Calendar.HOUR_OF_DAY, reminder.getAlarmTimeList().get(0).getHours());
+        c.set(Calendar.MINUTE, reminder.getAlarmTimeList().get(0).getMinutes());
+        c.set(Calendar.SECOND, 0);
+
+        for(int i = 0; i < reminder.getAmountDay(); i++){
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            AlertReceiver.reminder = reminder;
+            Intent intent = new Intent(this, AlertReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, reminder.getId() * 100 + i, intent, 0);
+
+            if(c.after(Calendar.getInstance())){
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+            }
+
+            c.add(Calendar.DATE, 1);
+
+        }
+
     }
 
     private void setAlarm(String text, String date, String time){

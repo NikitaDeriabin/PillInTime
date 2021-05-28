@@ -3,6 +3,7 @@
     package="com.example.pillintime">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -11,13 +12,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PillinTime">
-        <activity android:name=".UpdateReminderActivity"></activity>
+        <activity
+            android:name=".ImageViewActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name=".UpdateReminderActivity"
+            android:parentActivityName=".WorkSpaceActivity" />
         <activity android:name=".Notification.NotificationMessageActivity" />
         <activity
             android:name=".AddReminderActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:parentActivityName=".WorkSpaceActivity" />
         <activity
             android:name=".WorkSpaceActivity"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.PillinTime.NoActionBar" />
         <activity
             android:name=".MainActivity"
@@ -44,6 +51,8 @@
             </intent-filter>
         </receiver>
         <receiver android:name=".Notification.AlarmBroadcast" />
+        <receiver android:name=".Notification.AlertReceiver"/>
+
     </application>
 
 </manifest>

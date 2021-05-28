@@ -3,6 +3,8 @@ package com.example.pillintime;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -121,7 +125,7 @@ public class HomeFragment extends Fragment {
 
     private void setAdapter(List<Reminder> reminderList){
        setOnClickRecyclerItemListener();
-       reminderAdapter = new ReminderAdapter(getActivity().getApplicationContext(), reminderList, listener);
+       reminderAdapter = new ReminderAdapter(getActivity().getApplicationContext(), reminderList, listener, chosenDate);
        recyclerView.setAdapter(reminderAdapter);
     }
 
@@ -131,7 +135,9 @@ public class HomeFragment extends Fragment {
             public void onClick(View v, int position) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), UpdateReminderActivity.class);
 
+
                 intent.putExtra("id", String.valueOf(reminderListInBound.get(position).getId()));
+                intent.putExtra("img", String.valueOf(reminderListInBound.get(position).getImg()));
                 intent.putExtra("medicineTitle", String.valueOf(reminderListInBound.get(position).getName()));
                 intent.putExtra("amount", String.valueOf(reminderListInBound.get(position).getAmountDay()));
                 intent.putExtra("startDate_day", String.valueOf(reminderListInBound.get(position).getStartReminderDay().getDay()));
@@ -140,8 +146,41 @@ public class HomeFragment extends Fragment {
                 intent.putExtra("time_hours", String.valueOf(reminderListInBound.get(position).getAlarmTimeList().get(0).getHours()));
                 intent.putExtra("time_minutes", String.valueOf(reminderListInBound.get(position).getAlarmTimeList().get(0).getMinutes()));
 
+                int counter = 0;
+                for (ReminderDate date: reminderListInBound.get(position).getReminderDateList()) {
+                    intent.putExtra("day" + String.valueOf(counter), String.valueOf(date.getDay()));
+                    intent.putExtra("month" + String.valueOf(counter), String.valueOf(date.getMonth()));
+                    intent.putExtra("year" + String.valueOf(counter), String.valueOf(date.getYear()));
+                    if(date.getIsTaken() == true) {
+                        intent.putExtra("isTaken" + String.valueOf(counter), String.valueOf(1));
+                    } else{
+                        intent.putExtra("isTaken" + String.valueOf(counter), String.valueOf(0));
+                    }
+                    counter++;
+                }
+
                 startActivity(intent);
                 refreshFlag = true;
+            }
+
+            @Override
+            public void onSkipBtnClick(View v, int position, RelativeLayout listingRowLayout) {
+                listingRowLayout.setBackgroundColor(getResources().getColor(R.color.purple_200));
+                boolean flag = reminderListInBound.get(position).needToUpdateReminderDateList(chosenDate, false);
+                if(flag == true){
+                    userManager = new UserManager();
+                    userManager.updateReminder(reminderListInBound.get(position));
+                }
+            }
+
+            @Override
+            public void onTakeBtnClick(View v, int position, RelativeLayout listingRowLayout) {
+                listingRowLayout.setBackgroundColor(getResources().getColor(R.color.ripple_effect));
+                boolean flag = reminderListInBound.get(position).needToUpdateReminderDateList(chosenDate, true);
+                if(flag == true){
+                    userManager = new UserManager();
+                    userManager.updateReminder(reminderListInBound.get(position));
+                }
             }
         };
     }

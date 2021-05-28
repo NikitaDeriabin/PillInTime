@@ -2,7 +2,7 @@ package com.example.pillintime.ReminderAttrs;
 
 public class AlarmTime {
     private int hours, minutes;
-    private boolean taken = false, missed = false;
+    //private boolean taken = false, missed = false;
 
     //добавить конструктор для заполнения данных текущим временем
     public AlarmTime(){
@@ -31,13 +31,13 @@ public class AlarmTime {
         this.minutes = minutes;
     }
 
-    public boolean getTaken() {return taken; }
-
-    public void setTaken(boolean taken) {this.taken = taken; }
-
-    public boolean getMissed() {return missed; }
-
-    public void setMissed(boolean missed) {this.missed = missed; }
+//    public boolean getTaken() {return taken; }
+//
+//    public void setTaken(boolean taken) {this.taken = taken; }
+//
+//    public boolean getMissed() {return missed; }
+//
+//    public void setMissed(boolean missed) {this.missed = missed; }
 
     public String getAlarmTimeStr(){
         String time = FormatTime(this.hours, this.minutes);

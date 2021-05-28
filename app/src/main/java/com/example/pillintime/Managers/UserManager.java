@@ -1,7 +1,10 @@
 package com.example.pillintime.Managers;
 
+import android.content.ContentResolver;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +17,9 @@ import com.example.pillintime.Models.Reminder;
 import com.example.pillintime.Models.User;
 import com.example.pillintime.R;
 import com.example.pillintime.WorkSpaceActivity;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +27,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import static android.content.ContentValues.TAG;
 
@@ -31,7 +40,12 @@ public class UserManager {
 
     private FirebaseUser currUser;
     private DatabaseReference reference;
+    private StorageReference mStorageRef;
+    private FirebaseStorage mStorage;
     private String userID;
+
+    Uri imageUri;
+
 
 
     public UserManager() {
@@ -64,6 +78,89 @@ public class UserManager {
         System.out.println(userToReturn.reminderList.size());
 
         return userToReturn;
+    }
+
+    public String getFileExtension(Uri uri, ContentResolver cR){
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
+    }
+
+    public void uploadFileAndUpdateReminder(Uri imageUri, Reminder reminderToUpload, ContentResolver cR){
+        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
+        this.imageUri = imageUri;
+
+        if(this.imageUri != null) {
+            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
+                    + "." + getFileExtension(this.imageUri, cR));
+
+            fileReference.putFile(this.imageUri).
+                    addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            if(taskSnapshot.getMetadata() != null){
+                                if(taskSnapshot.getMetadata().getReference() != null){
+                                    Task<Uri> result = taskSnapshot.getMetadata().getReference().getDownloadUrl();
+                                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            // reminderToUpload.setImg(taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+                                            reminderToUpload.setImg(uri.toString());
+                                            updateReminder(reminderToUpload);
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }).
+                    addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            updateReminder(reminderToUpload);
+                        }
+                    });
+        }
+        else{
+            updateReminder(reminderToUpload);
+        }
+    }
+
+    public void uploadFileAndUpdate(Uri imageUri, Reminder reminderToUpload, ContentResolver cR){
+        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
+        this.imageUri = imageUri;
+
+        if(this.imageUri != null) {
+            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
+                    + "." + getFileExtension(this.imageUri, cR));
+
+            fileReference.putFile(this.imageUri).
+                addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        if(taskSnapshot.getMetadata() != null){
+                            if(taskSnapshot.getMetadata().getReference() != null){
+                                Task<Uri> result = taskSnapshot.getMetadata().getReference().getDownloadUrl();
+                                result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        // reminderToUpload.setImg(taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+                                        reminderToUpload.setImg(uri.toString());
+                                        update(reminderToUpload);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }).
+                addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        update(reminderToUpload);
+                    }
+                });
+        }
+        else{
+            update(reminderToUpload);
+        }
     }
 
     public void updateReminder(Reminder toUpdateReminder){
@@ -142,8 +239,10 @@ public class UserManager {
                     for (Reminder rem : userProfile.reminderList) {
                         if (rem.getId() == reminder.getId()) {
                             userProfile.reminderList.remove(rem);
-                            System.out.println("********************************************************");
-                            //System.out.println("reminder : " + reminder.getId() + " rem : " + rem.getId());
+                            if(reminder.getImg() != null && reminder.getImg().trim().length() != 0){
+                                StorageReference imageRef = mStorage.getReferenceFromUrl(reminder.getImg());
+                                imageRef.delete();
+                            }
                             break;
                         }
                     }
@@ -163,6 +262,6 @@ public class UserManager {
         currUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users");
         userID = currUser.getUid();
-
+        mStorage = FirebaseStorage.getInstance();
     }
 }

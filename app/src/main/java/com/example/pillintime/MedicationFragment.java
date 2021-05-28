@@ -42,7 +42,6 @@ public class MedicationFragment extends Fragment {
 
     boolean refreshFlag = false;
 
-
     private FirebaseUser currUser;
     private DatabaseReference reference;
     private String userID;
@@ -105,6 +104,7 @@ public class MedicationFragment extends Fragment {
                 Intent intent = new Intent(getActivity().getApplicationContext(), UpdateReminderActivity.class);
 
                 intent.putExtra("id", String.valueOf(reminderList.get(position).getId()));
+                intent.putExtra("img", String.valueOf(reminderList.get(position).getImg()));
                 intent.putExtra("medicineTitle", String.valueOf(reminderList.get(position).getName()));
                 intent.putExtra("amount", String.valueOf(reminderList.get(position).getAmountDay()));
                 intent.putExtra("startDate_day", String.valueOf(reminderList.get(position).getStartReminderDay().getDay()));
@@ -145,6 +145,21 @@ public class MedicationFragment extends Fragment {
                 });
 
                 dialog.show();
+            }
+
+            @Override
+            public void onClickThumbnailIcon(View v, int position) {
+
+                if(reminderList.get(position).getImg() != null &&
+                reminderList.get(position).getImg().trim().length() != 0) {
+                    Intent intent = new Intent(getActivity().getApplicationContext(), ImageViewActivity.class);
+                    intent.putExtra("imgStr", String.valueOf(reminderList.get(position).getImg()));
+
+                    startActivity(intent);
+                }
+                else{
+                    Toast.makeText(getContext(), "This reminder hasn't image!", Toast.LENGTH_SHORT).show();
+                }
             }
         };
     }

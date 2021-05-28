@@ -19,6 +19,7 @@ import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.example.pillintime.Models.Reminder;
 import com.example.pillintime.R;
 import com.example.pillintime.UpdateReminderActivity;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -52,7 +53,16 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
         TextDrawable drawable;
         drawable = holder.getDrawable();
 
-        holder.thumbnailImage.setImageDrawable(drawable);
+        //holder.thumbnailImage.setImageDrawable(drawable);
+
+        if(reminderList.get(position).getImg() != null
+                && reminderList.get(position).getImg().trim().length() != 0) {
+            Picasso.get()
+                    .load(reminderList.get(position).getImg())
+                    .fit()
+                    .centerCrop()
+                    .into(holder.thumbnailImage);
+        }
     }
 
     @Override
@@ -82,15 +92,9 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
                 letter = reminderText.getText().toString().substring(0,1);
             }
 
-            ColorGenerator colorGenerator = ColorGenerator.DEFAULT;
-            TextDrawable drawable;
-            int color = colorGenerator.getRandomColor();
-
-            drawable = TextDrawable.builder().buildRound(letter, color);
-            thumbnailImage.setImageDrawable(drawable);
-
             itemView.setOnClickListener(this);
             deleteIcon.setOnClickListener(this);
+            thumbnailImage.setOnClickListener(this);
         }
 
         @Override
@@ -99,7 +103,10 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
                 listener.onClickReminder(v, getAdapterPosition());
             } else if(v == deleteIcon){
                 listener.onClickDeleteIcon(v, getAdapterPosition());
+            } else if(v == thumbnailImage){
+                listener.onClickThumbnailIcon(v, getAdapterPosition());
             }
+
         }
 
         public TextDrawable getDrawable(){
@@ -122,6 +129,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
     public interface RecyclerViewClickListener{
         void onClickReminder(View v, int position);
         void onClickDeleteIcon(View v, int position);
+        void onClickThumbnailIcon(View v, int position);
     }
 
 }
