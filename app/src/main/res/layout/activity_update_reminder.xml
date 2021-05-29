@@ -1,195 +1,232 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-    >
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/reminder_update_image"
-        android:layout_width="280dp"
-        android:layout_height="280dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="42dp"
-        android:src="@drawable/pill"
-        app:civ_border_color="@color/white"
-        app:civ_border_width="2dp" />
+    android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_below="@+id/reminder_update_image"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:id="@+id/update_reminder_layout_top"
-        android:orientation="vertical"
-        android:layout_marginTop="40dp"
-
-        android:background="@color/teal_200"
-        android:layout_height="80dp">
-
-        <EditText
-            android:layout_width="match_parent"
-            android:id="@+id/reminder_title"
-            android:layout_marginLeft="72dp"
-            android:hint="@string/add_medicine"
-            android:textSize="25dp"
-            android:lines="4"
-            android:minLines="4"
-            android:gravity="top|left"
-            android:textColor="@android:color/white"
-            android:scrollHorizontally="false"
-            android:textColorHint="@android:color/white"
-            android:inputType="textCapWords|textMultiLine"
-            android:layout_marginRight="16dp"
-            android:layout_height="140dp"/>
-
-    </LinearLayout>
-
-    <ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
-        android:layout_below="@id/update_reminder_layout_top"
         android:layout_height="fill_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/reminder_update_image"
+                android:layout_width="280dp"
+                android:layout_height="220dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="42dp"
+                android:src="@drawable/pill"
+                app:civ_border_color="@color/white"
+                app:civ_border_width="2dp" />
+
+            <LinearLayout
+                android:id="@+id/add_reminder_layout_top"
+                android:layout_width="match_parent"
+                android:layout_height="82dp"
+                android:layout_below="@+id/reminder_update_image"
+                android:layout_marginTop="40dp"
+                android:background="@color/teal_200"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="32dp"
+                    android:src="@drawable/ic_pencil" />
+
+                <EditText
+                    android:id="@+id/reminder_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:hint="@string/add_medicine"
+                    android:inputType="textCapWords|textMultiLine"
+                    android:lines="4"
+                    android:minLines="4"
+                    android:scrollHorizontally="false"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="82dp"
+                android:layout_below="@+id/reminder_image"
+                android:background="@color/white"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="32dp"
+                    android:src="@drawable/ic_note" />
+
+                <EditText
+                    android:id="@+id/reminder_note_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:hint="@string/add_note"
+                    android:inputType="textCapWords|textMultiLine"
+                    android:lines="4"
+                    android:minLines="4"
+                    android:scrollHorizontally="false"
+                    android:textColor="@android:color/black"
+                    android:textColorHint="@android:color/black"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
 
             <RelativeLayout
-                android:layout_width="match_parent"
-                android:clickable="true"
                 android:id="@+id/date"
-                android:background="?android:attr/selectableItemBackground"
-                android:layout_height="72dp">
+                android:layout_width="match_parent"
+                android:layout_height="82dp"
+                android:background="@color/teal_200"
+                android:clickable="true">
 
                 <ImageView
                     android:id="@+id/date_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="32dp"
-                    android:src="@drawable/ic_view_day_grey600_24dp"
-                    android:layout_centerVertical="true" />
+                    android:src="@drawable/ic_calendar_black" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:orientation="vertical"
+                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/date_icon"
-                    android:layout_height="wrap_content">
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/date_text"
-                        android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:textSize="15dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/date" />
+                        android:text="@string/date"
+                        android:textColor="@color/white"
+                        android:textSize="20sp" />
 
                     <TextView
-                        android:layout_width="wrap_content"
                         android:id="@+id/set_date"
-                        android:textSize="15dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text=""
                         android:textAllCaps="false"
-                        android:textColor="@color/black"
-                        android:layout_height="wrap_content"/>
+                        android:textColor="@color/white"
+                        android:textSize="20sp" />
 
                 </LinearLayout>
 
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="match_parent"
-                android:clickable="true"
                 android:id="@+id/time"
-                android:background="?android:attr/selectableItemBackground"
-                android:layout_height="72dp">
+                android:layout_width="match_parent"
+                android:layout_height="82dp"
+                android:clickable="true">
 
                 <ImageView
                     android:id="@+id/time_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="32dp"
-                    android:src="@drawable/ic_access_time_grey600_24dp"
-                    android:layout_centerVertical="true" />
+                    android:src="@drawable/ic_access_time_grey600_24dp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:orientation="vertical"
+                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/time_icon"
-                    android:layout_height="wrap_content">
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/time_text"
-                        android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:textSize="15dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/time" />
+                        android:text="@string/time"
+                        android:textColor="@color/black"
+                        android:textSize="20sp" />
 
                     <TextView
-                        android:layout_width="wrap_content"
                         android:id="@+id/set_time"
-                        android:textAllCaps="false"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text=""
-                        android:textSize="15dp"
+                        android:textAllCaps="false"
                         android:textColor="@color/black"
-                        android:layout_height="wrap_content"/>
+                        android:textSize="20sp" />
 
                 </LinearLayout>
 
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="match_parent"
-                android:clickable="true"
                 android:id="@+id/update_reminder_number_picker"
-                android:background="?android:attr/selectableItemBackground"
-                android:layout_height="72dp">
+                android:layout_width="match_parent"
+                android:layout_height="82dp"
+                android:background="@color/teal_200"
+                android:clickable="true">
 
                 <ImageView
                     android:id="@+id/ic_number_picker"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="32dp"
-                    android:src="@drawable/ic_unfold_more_grey600_24dp"
-                    android:layout_centerVertical="true" />
+                    android:src="@drawable/ic_unfold_more_grey600_24dp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:orientation="vertical"
+                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/ic_number_picker"
-                    android:layout_height="wrap_content">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/period_days_text"
-                        android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:textSize="15dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/period_days" />
+                        android:layout_gravity="center"
+                        android:text="@string/period_days"
+                        android:textColor="@color/white"
+                        android:textSize="20sp" />
 
                     <NumberPicker
-                        android:layout_width="wrap_content"
                         android:id="@+id/set_period_days"
-                        android:textSize="15dp"
+                        android:theme="@style/NumberPickerText"
+                        android:layout_width="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_gravity="center"
+                        android:layout_height="200dp"
                         android:text=""
-                        android:textAllCaps="false"
-                        android:textColor="@color/black"
-                        android:layout_height="wrap_content"/>
+                        android:textAllCaps="false" />
 
                 </LinearLayout>
 
@@ -198,43 +235,39 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:weightSum="2"
-                android:layout_margin="25dp"
                 android:layout_height="match_parent"
+                android:layout_margin="25dp"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="2">
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/update_reminder_cancel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:clickable="true"
-                    app:srcCompat="@drawable/ic_close"
-                    app:fabSize="normal"
-                    android:layout_marginTop="10dp"
+                    android:background="@drawable/btn_skip"
+                    android:layout_weight="1"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginBottom="10dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center"
-                    android:backgroundTint="@color/cancel"
-                    android:layout_marginHorizontal="25dp"
-                    />
+                    android:text="CANCEL"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/update_reminder_submit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:clickable="true"
-                    app:srcCompat="@drawable/ic_check"
-                    app:fabSize="normal"
-                    android:layout_marginTop="10dp"
+                    android:background="@drawable/btn_take"
+                    android:layout_weight="1"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginLeft="10dp"
                     android:layout_marginBottom="10dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center"
-                    android:backgroundTint="@color/teal_200"
-                    android:layout_marginHorizontal="25dp"
-                    />
+                    android:text="SUBMIT"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
             </LinearLayout>
 
         </LinearLayout>

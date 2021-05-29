@@ -20,6 +20,7 @@ import com.example.pillintime.Adapter.ReminderAdapter;
 import com.example.pillintime.Managers.UserManager;
 import com.example.pillintime.Models.Reminder;
 import com.example.pillintime.Models.User;
+import com.example.pillintime.ReminderAttrs.ReminderDate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -106,12 +107,26 @@ public class MedicationFragment extends Fragment {
                 intent.putExtra("id", String.valueOf(reminderList.get(position).getId()));
                 intent.putExtra("img", String.valueOf(reminderList.get(position).getImg()));
                 intent.putExtra("medicineTitle", String.valueOf(reminderList.get(position).getName()));
+                intent.putExtra("note", String.valueOf(reminderList.get(position).getNote()));
                 intent.putExtra("amount", String.valueOf(reminderList.get(position).getAmountDay()));
                 intent.putExtra("startDate_day", String.valueOf(reminderList.get(position).getStartReminderDay().getDay()));
                 intent.putExtra("startDate_month", String.valueOf(reminderList.get(position).getStartReminderDay().getMonth()));
                 intent.putExtra("startDate_year", String.valueOf(reminderList.get(position).getStartReminderDay().getYear()));
                 intent.putExtra("time_hours", String.valueOf(reminderList.get(position).getAlarmTimeList().get(0).getHours()));
                 intent.putExtra("time_minutes", String.valueOf(reminderList.get(position).getAlarmTimeList().get(0).getMinutes()));
+
+                int counter = 0;
+                for (ReminderDate date: reminderList.get(position).getReminderDateList()) {
+                    intent.putExtra("day" + String.valueOf(counter), String.valueOf(date.getDay()));
+                    intent.putExtra("month" + String.valueOf(counter), String.valueOf(date.getMonth()));
+                    intent.putExtra("year" + String.valueOf(counter), String.valueOf(date.getYear()));
+                    if(date.getIsTaken() == true) {
+                        intent.putExtra("isTaken" + String.valueOf(counter), String.valueOf(1));
+                    } else{
+                        intent.putExtra("isTaken" + String.valueOf(counter), String.valueOf(0));
+                    }
+                    counter++;
+                }
 
                 startActivity(intent);
                 refreshFlag = true;

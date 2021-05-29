@@ -127,18 +127,18 @@ public class  WorkSpaceActivity extends AppCompatActivity
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new MedicationFragment()).commit();
                 break;
-            case R.id.nav_doctors:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new DoctorsFragment()).commit();
-                break;
+//            case R.id.nav_doctors:
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+//                        new DoctorsFragment()).commit();
+//                break;
             case R.id.nav_chart:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new ChartFragment()).commit();
                 break;
-            case R.id.nav_settings:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new SettingsFragment()).commit();
-                break;
+//            case R.id.nav_settings:
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+//                        new SettingsFragment()).commit();
+//                break;
             case R.id.nav_logout:
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(WorkSpaceActivity.this, MainActivity.class));
@@ -148,9 +148,9 @@ public class  WorkSpaceActivity extends AppCompatActivity
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new AboutFragment()).commit();
                 break;
-            case R.id.nav_share:
-                Toast.makeText(this, "Share", Toast.LENGTH_LONG).show();
-                break;
+//            case R.id.nav_share:
+//                Toast.makeText(this, "Share", Toast.LENGTH_LONG).show();
+//                break;
         }
 
         drawer.closeDrawer(GravityCompat.START);

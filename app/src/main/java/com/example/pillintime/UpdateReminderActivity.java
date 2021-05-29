@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -47,8 +48,9 @@ public class UpdateReminderActivity extends AppCompatActivity implements View.On
     TextView btn_date, btn_time, btn_numPicker;
     TextView set_time, set_date;
     EditText medicineTitle;
-    FloatingActionButton btn_sbmt;
-    FloatingActionButton btn_cancel;
+    EditText medicineNote;
+    Button btn_sbmt;
+    Button btn_cancel;
     String timeToNotify;
 
     UserManager userManager;
@@ -71,6 +73,7 @@ public class UpdateReminderActivity extends AppCompatActivity implements View.On
         btn_time = findViewById(R.id.time_text);
         btn_numPicker = findViewById(R.id.period_days_text);
         medicineTitle = findViewById(R.id.reminder_title);
+        medicineNote = findViewById(R.id.reminder_note_update);
         btn_sbmt = findViewById(R.id.update_reminder_submit);
         btn_cancel = findViewById(R.id.update_reminder_cancel);
         set_date = findViewById(R.id.set_date);
@@ -109,6 +112,8 @@ public class UpdateReminderActivity extends AppCompatActivity implements View.On
         if(extras != null){
             id = Integer.parseInt(extras.getString("id").trim());
             medicineTitle.setText(extras.getString("medicineTitle"));
+            medicineNote.setText(extras.getString("note"));
+
             day = extras.getString("startDate_day");
             month = extras.getString("startDate_month");
             year = extras.getString("startDate_year");
@@ -240,11 +245,13 @@ public class UpdateReminderActivity extends AppCompatActivity implements View.On
             } else {
 
                 String reminderTitle = medicineTitle.getText().toString().trim();
+                String reminderNoteStr = medicineNote.getText().toString().trim();
                 String date = set_date.getText().toString().trim();
                 String time = set_time.getText().toString().trim();
 
                 //Creating new reminder
                 reminder.setName(reminderTitle);
+                reminder.setNote(reminderNoteStr);
                 reminder.setStartReminderDay(startReminderDate);
 
                 reminder.getAlarmTimeList().add(alarmTime);

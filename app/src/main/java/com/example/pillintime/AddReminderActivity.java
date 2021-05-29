@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -46,8 +47,9 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
     TextView btn_date, btn_time, btn_numPicker;
     TextView set_time, set_date;
     EditText medicineTitle;
-    FloatingActionButton btn_sbmt;
-    FloatingActionButton btn_cancel;
+    EditText medicineNote;
+    Button btn_sbmt;
+    Button btn_cancel;
     String timeToNotify;
 
     UserManager userManager;
@@ -74,12 +76,14 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
         btn_time = findViewById(R.id.time_text);
         btn_numPicker = findViewById(R.id.period_days_text);
         medicineTitle = findViewById(R.id.reminder_title);
+        medicineNote = findViewById(R.id.reminder_note);
         btn_sbmt = findViewById(R.id.add_reminder_submit);
         btn_cancel = findViewById(R.id.add_reminder_cancel);
         set_date = findViewById(R.id.set_date);
         set_time = findViewById(R.id.set_time);
         numberPicker = findViewById(R.id.set_period_days);
         reminderImageView = findViewById(R.id.reminder_image);
+
 
 
 
@@ -193,12 +197,14 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
                 userManager = new UserManager();
 
                 String reminderTitle = medicineTitle.getText().toString().trim();
+                String reminderNoteStr = medicineNote.getText().toString().trim();
                 String date = set_date.getText().toString().trim();
                 String time = set_time.getText().toString().trim();
 
 
                 //set parameters
                 reminder.setName(reminderTitle);
+                reminder.setNote(reminderNoteStr);
                 reminder.setStartReminderDay(startReminderDate);
 
                 //возможно недобавится нужно проверить

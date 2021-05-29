@@ -6,7 +6,7 @@
 
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/btn_sign_in"></solid>
+            <solid android:color="@color/blue"></solid>
             <stroke android:color="@color/btn_sign_in_stroke" android:width="2px"></stroke>
             <corners android:radius="200dp"></corners>
         </shape>

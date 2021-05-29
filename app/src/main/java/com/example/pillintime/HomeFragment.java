@@ -139,6 +139,7 @@ public class HomeFragment extends Fragment {
                 intent.putExtra("id", String.valueOf(reminderListInBound.get(position).getId()));
                 intent.putExtra("img", String.valueOf(reminderListInBound.get(position).getImg()));
                 intent.putExtra("medicineTitle", String.valueOf(reminderListInBound.get(position).getName()));
+                intent.putExtra("note", String.valueOf(reminderListInBound.get(position).getNote()));
                 intent.putExtra("amount", String.valueOf(reminderListInBound.get(position).getAmountDay()));
                 intent.putExtra("startDate_day", String.valueOf(reminderListInBound.get(position).getStartReminderDay().getDay()));
                 intent.putExtra("startDate_month", String.valueOf(reminderListInBound.get(position).getStartReminderDay().getMonth()));

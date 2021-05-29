@@ -5,7 +5,7 @@
     android:id="@+id/root_element"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/pill"
+    android:background="@drawable/main_background3"
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
@@ -23,7 +23,7 @@
             android:fontFamily="@font/suez_one"
             android:text="@string/app_in_name"
             android:textAlignment="center"
-            android:textColor="@android:color/holo_blue_light"
+            android:textColor="@color/blue"
             android:textSize="50sp" />
 
 
